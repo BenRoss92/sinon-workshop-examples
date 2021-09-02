@@ -1,6 +1,6 @@
+var chai = require('chai');
+var expect = chai.expect;
 var sinon = require('sinon');
-
-var assert = require('assert');
 
 function once(fn) {
   var returnValue,
@@ -17,7 +17,7 @@ function once(fn) {
 describe('Array', function() {
   describe('#indexOf()', function() {
     it('should return -1 when the value is not present', function() {
-      assert.equal([1, 2, 3].indexOf(4), -1);
+      expect(2).to.equal(2);
     });
 
     it("calls the original function", function () {
@@ -25,8 +25,8 @@ describe('Array', function() {
       var proxy = once(callback);
     
       proxy();
-    
-      assert(callback.called);
+
+      expect(callback.called).to.be.true;
     });
     
   });
