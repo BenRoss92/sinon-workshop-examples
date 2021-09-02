@@ -18,5 +18,8 @@
   "homepage": "https://github.com/BenRoss92/sinon-workshop-examples#readme",
   "devDependencies": {
     "mocha": "^9.1.1"
+  },
+  "dependencies": {
+    "sinon": "^11.1.2"
   }
 }
