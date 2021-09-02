@@ -98,6 +98,12 @@ describe('Sandboxes', () => {
 
             afterEach(() => {
                 sinon.restore();
+                // Alternatively, if you don't want to restore all of the mocked objects (using `sinon.restore()`), you can also restore a mock/s explicitly by either:
+                    // calling:
+                        // (cakeManager.isThereCake as SinonStub).restore();
+                    // OR if you originally needed to assign this mocked method as a variable to be re-used, you can call `restore` on that variable:
+                        // const stub = sinon.stub(cakeManager, 'isThereCake').returns(false);
+                        // stub.restore();
             });
 
             describe('when there is no cake left', () => {
