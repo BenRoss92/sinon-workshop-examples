@@ -4,7 +4,7 @@
   "description": "Sinon.js full-stack workshop examples",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/BenRoss92/sinon-workshop-examples/issues"
   },
-  "homepage": "https://github.com/BenRoss92/sinon-workshop-examples#readme"
+  "homepage": "https://github.com/BenRoss92/sinon-workshop-examples#readme",
+  "devDependencies": {
+    "mocha": "^9.1.1"
+  }
 }
