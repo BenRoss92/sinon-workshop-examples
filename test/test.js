@@ -1,6 +1,8 @@
 var chai = require('chai');
-var expect = chai.expect;
 var sinon = require('sinon');
+var sinonChai = require('sinon-chai');
+var expect = chai.expect;
+chai.use(sinonChai);
 
 function once(fn) {
   var returnValue,
@@ -26,7 +28,7 @@ describe('Array', function() {
     
       proxy();
 
-      expect(callback.called).to.be.true;
+      expect(callback).to.have.been.called;
     });
     
   });
