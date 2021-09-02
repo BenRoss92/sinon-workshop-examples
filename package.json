@@ -1,0 +1,19 @@
+{
+  "name": "sinon-workshop-examples",
+  "version": "1.0.0",
+  "description": "Sinon.js full-stack workshop examples",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BenRoss92/sinon-workshop-examples.git"
+  },
+  "author": "YouView CloudServices <team.cloudservices@youview.com> (https://www.youview.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BenRoss92/sinon-workshop-examples/issues"
+  },
+  "homepage": "https://github.com/BenRoss92/sinon-workshop-examples#readme"
+}
