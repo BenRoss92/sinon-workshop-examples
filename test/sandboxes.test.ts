@@ -35,6 +35,9 @@ describe('Sandboxes', () => {
 
     // Uncomment to run the test:
     // describe('Broken - Share an instance of CakeManager and Ben between tests: already wrapped', () => {
+    //    // Sharing these instances of the classes in different tests - Sinon wraps these objects, 
+    // // so if we hold onto a reference of them in between tests and don't tell Sinon to reset the behaviour of the 'isThereCake' Test Double,
+    // // then Sinon will tell us that we've already created a Test Double for the 'isThereCake' method inside of the Sinon sandbox with certain behaviour.
     //     const cakeManager = new CakeManager();
     //     const ben = new Ben(cakeManager);
     //
