@@ -41,7 +41,6 @@ describe("stubs", () => {
 
 		it("should stub an asynchronous ES6 method using 'resolves' method", async () => {
 			class Weather {
-
 				// Now an async method:
 				isRaining(): Promise<boolean> {
 					return Promise.resolve(false);
@@ -58,7 +57,7 @@ describe("stubs", () => {
 			}
 
 			const weather = new Weather();
-			
+
 			// 'Resolves' returns a promise which resolves to the value passed in
 			sinon.stub(weather, "isRaining").resolves(true);
 
@@ -68,7 +67,7 @@ describe("stubs", () => {
 			const result = await person.shouldBringUmbrella();
 			expect(result).to.be.true;
 
-			// You can optionally check whether the stubbed method was called (this works the same with synchronous methods) 
+			// You can optionally check whether the stubbed method was called (this works the same with synchronous methods)
 			expect(weather.isRaining).to.have.been.calledOnce;
 		});
 
@@ -87,10 +86,10 @@ describe("stubs", () => {
 		});
 	});
 
-	describe('#throws', () => {
-		it('should stub a function to synchronously throw a error', () => {
+	describe("#throws", () => {
+		it("should stub a synchronous method to throw a error", () => {
 			class Weather {
-				// default is that it's raining 
+				// default is that it's raining
 				// imagine this value comes from an Rx observable and that an error could be thrown.
 				isRaining() {
 					return true;
@@ -107,7 +106,7 @@ describe("stubs", () => {
 					} catch (error) {
 						// this path is what we want to test
 						// return out own custom message to the user
-						return 'something went wrong';
+						return "something went wrong";
 					}
 				}
 			}
@@ -119,14 +118,14 @@ describe("stubs", () => {
 
 			const person = new Person(weather);
 
-			expect(person.shouldBringUmbrella()).to.equal('something went wrong');
+			expect(person.shouldBringUmbrella()).to.equal("something went wrong");
 		});
 	});
 
-	describe('#rejects', () => {
-		it('should stub an async method to reject', async () => {
+	describe("#rejects", () => {
+		it("should stub an async method to reject", async () => {
 			class Weather {
-				// default is that it's raining 
+				// default is that it's raining
 				// imagine this value comes from an Rx observable and that an error could be thrown.
 				async isRaining() {
 					return true;
@@ -143,7 +142,7 @@ describe("stubs", () => {
 					} catch (error) {
 						// this path is what we want to test
 						// return out own custom message to the user
-						return 'something went wrong';
+						return "something went wrong";
 					}
 				}
 			}
@@ -157,8 +156,33 @@ describe("stubs", () => {
 
 			const result = await person.shouldBringUmbrella();
 
-			expect(result).to.equal('something went wrong');
+			expect(result).to.equal("something went wrong");
+		});
+	});
+
+	describe("#withArgs", () => {
+		it("should make the stub behave differently based when receiving different arguments", () => {
+			// Just a plain function (as an example)
+			const stub = sinon.stub();
+			// When this stubbed function receives the argument 42, it will return 1
+			stub.withArgs(42).returns(1);
+
+			// We can make the stub throw an exception based on receiving a certain argument
+			const error = new Error("name");
+			stub.withArgs(1).throws(error);
+
+			expect(stub()).to.be.undefined;
+
+			expect(stub(42)).to.equal(1);
 			
+			// Check how many times we called the stub with argument 42
+			expect(stub.withArgs(42).callCount).to.equal(1);
+
+			try {
+				stub(1);
+			} catch (error) {
+				expect(error).to.equal(error);
+			}
 		});
 	});
 });
