@@ -53,7 +53,5 @@ describe("stubs", () => {
 			expect(shouldBringUmbrella(isSunny)).to.be.false;
 		});
 	});
-		});
-	});
 });
 
