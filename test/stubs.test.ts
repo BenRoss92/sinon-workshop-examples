@@ -38,6 +38,20 @@ describe("stubs", () => {
 			// e.g. We can find out how many times a stub was called
 			expect(weather.isRaining).to.have.been.calledOnce
 		});
+
+		it('should stub a callback function', () => {
+			// Check whether I should take an umbrella based on whether it's sunny
+			function shouldBringUmbrella(isSunny: () => boolean): boolean {
+				if (isSunny()) {
+					return false;
+				}
+				return true;
+			}
+
+			const isSunny = sinon.stub().returns(true);
+
+			expect(shouldBringUmbrella(isSunny)).to.be.false;
+		});
 	});
 		});
 	});
