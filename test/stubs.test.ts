@@ -86,5 +86,80 @@ describe("stubs", () => {
 			expect(shouldBringUmbrella(isSunny)).to.be.false;
 		});
 	});
+
+	describe('#throws', () => {
+		it('should stub a function to synchronously throw a error', () => {
+			class Weather {
+				// default is that it's raining 
+				// imagine this value comes from an Rx observable and that an error could be thrown.
+				isRaining() {
+					return true;
+				}
+			}
+
+			class Person {
+				constructor(private readonly weather: Weather) {}
+
+				shouldBringUmbrella() {
+					try {
+						// imagine we don't control this Weather class (it's a third-party dependency that can throw)
+						this.weather.isRaining();
+					} catch (error) {
+						// this path is what we want to test
+						// return out own custom message to the user
+						return 'something went wrong';
+					}
+				}
+			}
+
+			const weather = new Weather();
+
+			// We want to test the path that occurs when an error is thrown by isRaining which we don't control
+			sinon.stub(weather, "isRaining").throws();
+
+			const person = new Person(weather);
+
+			expect(person.shouldBringUmbrella()).to.equal('something went wrong');
+		});
+	});
+
+	describe('#rejects', () => {
+		it('should stub an async method to reject', async () => {
+			class Weather {
+				// default is that it's raining 
+				// imagine this value comes from an Rx observable and that an error could be thrown.
+				async isRaining() {
+					return true;
+				}
+			}
+
+			class Person {
+				constructor(private readonly weather: Weather) {}
+
+				async shouldBringUmbrella() {
+					try {
+						// imagine we don't control this Weather class (it's a third-party dependency that can throw)
+						await this.weather.isRaining();
+					} catch (error) {
+						// this path is what we want to test
+						// return out own custom message to the user
+						return 'something went wrong';
+					}
+				}
+			}
+
+			const weather = new Weather();
+
+			// We want to test the path that occurs when an error is thrown by isRaining which we don't control
+			sinon.stub(weather, "isRaining").rejects();
+
+			const person = new Person(weather);
+
+			const result = await person.shouldBringUmbrella();
+
+			expect(result).to.equal('something went wrong');
+			
+		});
+	});
 });
 
