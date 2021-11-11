@@ -33,6 +33,12 @@ describe("stubs", () => {
 
 			// shouldBringUmbrella should now equal true instead of false;
 			expect(person.shouldBringUmbrella()).to.be.true;
+
+			// The Stub API extends the Spy API. So a stub can do everything that a spy can do and more.
+			// e.g. We can find out how many times a stub was called
+			expect(weather.isRaining).to.have.been.calledOnce
+		});
+	});
 		});
 	});
 });
