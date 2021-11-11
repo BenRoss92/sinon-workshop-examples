@@ -36,6 +36,8 @@ describe('spy', () => {
         
             expect(callback).to.have.been.calledOnce;
         });
+
+        // Spying on an ES6 method that returns a promise is the same as spying on a method that returns a sychronous value
     });
 
     describe('#getCall and #getCalls', () => {
