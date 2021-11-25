@@ -185,5 +185,42 @@ describe("stubs", () => {
 			}
 		});
 	});
+
+	describe('#callsFake', () => {
+		it('should make the stub call a fake function', () => {
+			class Database {
+				// For the sake of this exercise, pretend that this method creates a real database connection and doesn't return anything - we don't want to use a real database in our unit test.
+				save(name: string) {
+					// saves data to a database ...
+				}
+			}
+
+			class User {
+				constructor(private readonly db: Database) {}
+
+				saveName (name: string): string {
+					// We just want our test to not end up failing on this line just because we don't have a real database
+					this.db.save(name);
+					// This is the line we care about testing
+					return 'Name has been saved!';
+				}
+			}
+
+			const fakeStorage: string[] = [];
+
+			const db = new Database();
+			sinon.stub(db, 'save').callsFake(function fakeSave(name) {
+				fakeStorage.push(name);
+			});
+			const user = new User(db);
+			const name = 'Ben';
+			const result = user.saveName(name);
+
+			// Not good to test your fake implementation or do internal logic in your test: I'm just showing that it's possible in case it's needed:
+			expect(fakeStorage).to.include(name);
+
+			expect(result).to.equal('Name has been saved!');
+		});
+	});
 });
 
