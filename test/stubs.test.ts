@@ -1,10 +1,16 @@
 import chai from "chai";
+import http from 'http';
 import sinon from "sinon";
 import sinonChai from "sinon-chai";
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe("stubs", () => {
+
+	beforeEach(() => {
+		sinon.restore();
+	});
+
 	describe("#stub", () => {
 		it("should stub a synchronous ES6 method using 'returns' method", () => {
 			class Weather {
@@ -224,5 +230,30 @@ describe("stubs", () => {
 			expect(result).to.equal('Name has been saved!');
 		});
 	});
-});
+
+	describe('#yields', () => {
+		it('should stub a function that takes a callback function as an argument, and call this callback function with no arguments', () => {
+			const callback = sinon.spy();
+			
+			const get = sinon.stub(http, 'get');
+			get.yields();
+			
+			http.get('http://www.test.com', callback);
+
+			expect(callback).to.have.been.calledOnce;
+			expect(callback.getCall(0).args[0]).to.equal(undefined);
+		});
+
+		it('should stub a function that takes a callback function as an argument, and call this callback function with certain arguments', () => {
+			const callback = sinon.spy();
+			
+			const get = sinon.stub(http, 'get');
+			get.yields('a', 'b', 'c');
+			
+			http.get('http://www.test.com', callback);
+
+			expect(callback).to.have.been.calledOnce;
+			expect(callback.getCall(0).args).to.eql(['a', 'b', 'c']);
+		});
+	});
 
