@@ -1,12 +1,11 @@
 import chai from "chai";
-import http from 'http';
+import http from "http";
 import sinon from "sinon";
 import sinonChai from "sinon-chai";
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe("stubs", () => {
-
 	beforeEach(() => {
 		sinon.restore();
 	});
@@ -180,7 +179,7 @@ describe("stubs", () => {
 			expect(stub()).to.be.undefined;
 
 			expect(stub(42)).to.equal(1);
-			
+
 			// Check how many times we called the stub with argument 42
 			expect(stub.withArgs(42).callCount).to.equal(1);
 
@@ -192,8 +191,8 @@ describe("stubs", () => {
 		});
 	});
 
-	describe('#callsFake', () => {
-		it('should make the stub call a fake function', () => {
+	describe("#callsFake", () => {
+		it("should make the stub call a fake function", () => {
 			// One use case of callsFake could be when using an in-memory test database instead of a real database for a test - see https://martinfowler.com/bliki/InMemoryTestDatabase.html
 
 			class Database {
@@ -206,54 +205,54 @@ describe("stubs", () => {
 			class User {
 				constructor(private readonly db: Database) {}
 
-				saveName (name: string): string {
+				saveName(name: string): string {
 					// We just want our test to not end up failing on this line just because we don't have a real database
 					this.db.save(name);
 					// This is the line we care about testing
-					return 'Name has been saved!';
+					return "Name has been saved!";
 				}
 			}
 
 			const fakeStorage: string[] = [];
 
 			const db = new Database();
-			sinon.stub(db, 'save').callsFake(function fakeSave(name) {
+			sinon.stub(db, "save").callsFake(function fakeSave(name) {
 				fakeStorage.push(name);
 			});
 			const user = new User(db);
-			const name = 'Ben';
+			const name = "Ben";
 			const result = user.saveName(name);
 
 			// Not good to test your fake implementation or do internal logic in your test: I'm just showing that it's possible in case it's needed:
 			expect(fakeStorage).to.include(name);
 
-			expect(result).to.equal('Name has been saved!');
+			expect(result).to.equal("Name has been saved!");
 		});
 	});
 
-	describe('#yields', () => {
-		it('should stub a function that takes a callback function as an argument, and call this callback function with no arguments', () => {
+	describe("#yields", () => {
+		it("should stub a function that takes a callback function as an argument, and call this callback function with no arguments", () => {
 			const callback = sinon.spy();
-			
-			const get = sinon.stub(http, 'get');
+
+			const get = sinon.stub(http, "get");
 			get.yields();
-			
-			http.get('http://www.test.com', callback);
+
+			http.get("http://www.test.com", callback);
 
 			expect(callback).to.have.been.calledOnce;
 			expect(callback.getCall(0).args[0]).to.equal(undefined);
 		});
 
-		it('should stub a function that takes a callback function as an argument, and call this callback function with certain arguments', () => {
+		it("should stub a function that takes a callback function as an argument, and call this callback function with certain arguments", () => {
 			const callback = sinon.spy();
-			
-			const get = sinon.stub(http, 'get');
-			get.yields('a', 'b', 'c');
-			
-			http.get('http://www.test.com', callback);
+
+			const get = sinon.stub(http, "get");
+			get.yields("a", "b", "c");
+
+			http.get("http://www.test.com", callback);
 
 			expect(callback).to.have.been.calledOnce;
-			expect(callback.getCall(0).args).to.eql(['a', 'b', 'c']);
+			expect(callback.getCall(0).args).to.eql(["a", "b", "c"]);
 		});
 	});
 
