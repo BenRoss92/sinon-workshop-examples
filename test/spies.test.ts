@@ -37,7 +37,7 @@ describe('spy', () => {
             expect(callback).to.have.been.calledOnce;
         });
 
-        // Spying on an ES6 method that returns a promise is the same as spying on a method that returns a sychronous value
+        // Spying on an ES6 method that returns a promise is the same as spying on a method that returns a sychronous value. This is because we aren't concerned about the return value. We only care whether the method has been called.
     });
 
     describe('#getCall and #getCalls', () => {

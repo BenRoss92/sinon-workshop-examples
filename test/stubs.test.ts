@@ -188,6 +188,8 @@ describe("stubs", () => {
 
 	describe('#callsFake', () => {
 		it('should make the stub call a fake function', () => {
+			// One use case of callsFake could be when using an in-memory test database instead of a real database for a test - see https://martinfowler.com/bliki/InMemoryTestDatabase.html
+
 			class Database {
 				// For the sake of this exercise, pretend that this method creates a real database connection and doesn't return anything - we don't want to use a real database in our unit test.
 				save(name: string) {
