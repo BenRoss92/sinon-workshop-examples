@@ -257,3 +257,67 @@ describe("stubs", () => {
 		});
 	});
 
+	describe('#returnsThis', () => {
+		it('should stub a function and return the "this" value of that function', () => {
+			/**
+			 * `returnsThis` can be used to stub "fluent APIs" (i.e. methods that are chained, e.g. jQuery):
+			 * ```
+			 * $("p")
+			 * 	.css("color", "green")
+			 *  .animate({ width: "100%" })
+			 *  .animate({ fontSize: "46px" });
+			 * ```
+			 */
+
+			// Imagine we're importing this object from a third-party library:
+			const dbLibrary = {
+				connect: function() {
+					// Does something that we don't control
+					// Then returns the `dbLibrary` object again to all chaining methods together
+				},
+				wipe: function() {
+					// Does something that we don't control
+					// Then returns the `dbLibrary` object again to all chaining methods together
+				},
+				addTestData: function() {
+					// Does something that we don't control
+					// Then returns the `dbLibrary` object again to all chaining methods together
+				}	
+			};
+
+			sinon.stub(dbLibrary, 'connect').returnsThis(); // Return dbLibrary object when `connect` is called.
+			sinon.stub(dbLibrary, 'wipe').returnsThis(); // Return dbLibrary object when `wipe` is called.
+			sinon.stub(dbLibrary, 'addTestData').returnsThis(); // Return dbLibrary object when `addTestData` is called.
+
+			// `db` is the unit we want to test
+			const db = {
+				connect: function() { 
+					dbLibrary.connect();
+					return this;
+				},
+				wipe: function() { 
+					dbLibrary.addTestData();
+					return this;
+				},
+				addTestData: function() {
+					dbLibrary.wipe();
+					return this;
+				}
+			};
+
+			// We're testing this function - that it calls each of the `db` methods once
+			function setUpDb() {
+				db
+					.connect()
+					.wipe()
+					.addTestData();
+			}
+
+			setUpDb();
+				
+			expect(dbLibrary.connect).to.have.been.calledOnce;
+			expect(dbLibrary.wipe).to.have.been.calledOnce;
+			expect(dbLibrary.addTestData).to.have.been.calledOnce;
+		});
+	});
+});
