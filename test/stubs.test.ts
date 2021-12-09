@@ -257,67 +257,67 @@ describe("stubs", () => {
 		});
 	});
 
-	describe('#returnsThis', () => {
+	describe("#returnsThis", () => {
 		it('should stub a function and return the "this" value of that function', () => {
-			/**
-			 * `returnsThis` can be used to stub "fluent APIs" (i.e. methods that are chained, e.g. jQuery):
-			 * ```
-			 * $("p")
-			 * 	.css("color", "green")
-			 *  .animate({ width: "100%" })
-			 *  .animate({ fontSize: "46px" });
-			 * ```
-			 */
+			// `returnsThis` can be used to stub "fluent APIs" (i.e. methods that are chained, e.g. jQuery):
+			// ```
+			// $("p")
+			// 	.css("color", "green")
+			//  .animate({ width: "100%" })
+			//  .animate({ fontSize: "46px" });
+			// ```
 
-			// Imagine we're importing this object from a third-party library:
-			const dbLibrary = {
-				connect: function() {
-					// Does something that we don't control
-					// Then returns the `dbLibrary` object again to all chaining methods together
-				},
-				wipe: function() {
-					// Does something that we don't control
-					// Then returns the `dbLibrary` object again to all chaining methods together
-				},
-				addTestData: function() {
-					// Does something that we don't control
-					// Then returns the `dbLibrary` object again to all chaining methods together
-				}	
-			};
+			// Imagine we're importing an imaginary third-party library called `DatabaseLibrary` - this is the TypeScript interface that is made available to us:
+			interface DatabaseLibrary {
+				// Each method returns the `this` value (i.e. the surrounding `DatabaseLibrary` object):
+				connect: () => DatabaseLibrary;
+				wipe: () => DatabaseLibrary;
+				addTestData: () => DatabaseLibrary;
+			}
 
-			sinon.stub(dbLibrary, 'connect').returnsThis(); // Return dbLibrary object when `connect` is called.
-			sinon.stub(dbLibrary, 'wipe').returnsThis(); // Return dbLibrary object when `wipe` is called.
-			sinon.stub(dbLibrary, 'addTestData').returnsThis(); // Return dbLibrary object when `addTestData` is called.
+			class Database {
+				// We inject the `DatabaseLibrary` into the constructor to later use dependency injection
+				constructor(private readonly dbLibrary: DatabaseLibrary) {}
 
-			// `db` is the unit we want to test
-			const db = {
-				connect: function() { 
-					dbLibrary.connect();
-					return this;
+				// We want to test the `setUpDb` method
+				setUpDb() {
+					this.dbLibrary
+						.connect()
+						.wipe()
+						.addTestData();
+				}
+			}
+
+			// N.B. GOTCHA:
+			// Sinon will throw the following error if you attempt the below: "'DatabaseLibrary' only refers to a type, but is being used as a value here."
+			// This is a limitation of the Sinon library. Sinon cannot create Test Doubles from things that don't get turned into real JavaScript objects after the TypeScript compiler compiles the TypeScript code. Therefore we cannot create Test Doubles directly for e.g. interfaces, types, etc. (in this case, an interface):
+			// sinon.stub(DatabaseLibrary, 'connect');
+
+			// We need to instead create a tangible object that Sinon can understand
+			const dbLibTestDouble: DatabaseLibrary = {
+				connect: function () {
+					throw new Error('Not implemented'); 
 				},
-				wipe: function() { 
-					dbLibrary.addTestData();
-					return this;
+				wipe: function () {
+					throw new Error('Not implemented');
 				},
-				addTestData: function() {
-					dbLibrary.wipe();
-					return this;
+				addTestData: function () {
+					throw new Error('Not implemented');
 				}
 			};
 
-			// We're testing this function - that it calls each of the `db` methods once
-			function setUpDb() {
-				db
-					.connect()
-					.wipe()
-					.addTestData();
-			}
+			// Now we can use Sinon to add behaviour to our test double:
+			sinon.stub(dbLibTestDouble, 'connect').returnsThis();
+			sinon.stub(dbLibTestDouble, 'wipe').returnsThis();
+			sinon.stub(dbLibTestDouble, 'addTestData').returnsThis();
 
-			setUpDb();
-				
-			expect(dbLibrary.connect).to.have.been.calledOnce;
-			expect(dbLibrary.wipe).to.have.been.calledOnce;
-			expect(dbLibrary.addTestData).to.have.been.calledOnce;
+			const database = new Database(dbLibTestDouble);
+
+			database.setUpDb();
+
+			expect(dbLibTestDouble.connect).to.have.been.calledOnce;
+			expect(dbLibTestDouble.wipe).to.have.been.calledOnce;
+			expect(dbLibTestDouble.addTestData).to.have.been.calledOnce;
 		});
 	});
 });
