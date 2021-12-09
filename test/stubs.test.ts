@@ -318,5 +318,77 @@ describe("stubs", () => {
 			expect(dbLibTestDouble.wipe).to.have.been.calledOnce;
 			expect(dbLibTestDouble.addTestData).to.have.been.calledOnce;
 		});
+
+		it("should be used correctly in all of our cloud services, but currently it isn't", () => {
+			// All of the following cloud services use the incorrect code below: 
+			// - discover-ondemand-query-v2 - https://github.cldsvcs.com/youview/discover-ondemand-query-v2/blob/master/test/unit/mock/mocSolrClientLib.js
+			// - discover-ondemand-query-v1 - https://github.cldsvcs.com/youview/discover-ondemand-query-v1/blob/master/test/unit/mock/mockSolrClientLib.js
+			// - discover-iponlypoc-service-v1 - https://github.cldsvcs.com/youview/discover-iponlypoc-service-v1/blob/master/test/unit/mock/mock_solr_client_lib.js
+			function mockClientFactory(params: any) {
+
+				var defaultFunc = sinon.stub().returnsThis();
+			  
+				if (!params.createQuery)  { params.createQuery  = defaultFunc; }
+				if (!params.q)            { params.q            = defaultFunc; }
+				if (!params.start)        { params.start        = defaultFunc; }
+				if (!params.rows)         { params.rows         = defaultFunc; }
+				if (!params.sort)         { params.sort         = defaultFunc; }
+				if (!params.search)       { params.search       = defaultFunc; }
+				if (!params.set)          { params.set          = defaultFunc; }
+				if (!params.fl)           { params.fl           = defaultFunc; }
+
+				// Changing to this would make our assertions pass:
+				// if (!params.createQuery)  { params.createQuery  = sinon.stub().returnsThis(); }
+				// if (!params.q)            { params.q            = sinon.stub().returnsThis(); }
+				// if (!params.start)        { params.start        = sinon.stub().returnsThis(); }
+				// if (!params.rows)         { params.rows         = sinon.stub().returnsThis(); }
+				// if (!params.sort)         { params.sort         = sinon.stub().returnsThis(); }
+				// if (!params.search)       { params.search       = sinon.stub().returnsThis(); }
+				// if (!params.set)          { params.set          = sinon.stub().returnsThis(); }
+				// if (!params.fl)           { params.fl           = sinon.stub().returnsThis(); }
+
+				function make() {
+				  return params;
+				}
+			  
+				return make;
+			}
+
+			const mockClient  = mockClientFactory({ 
+				q: sinon.stub().returnsThis(), 
+				rows: sinon.stub().returnsThis() 
+			});
+
+			const client = mockClient();
+
+			client
+				.createQuery()
+				.q()
+				.start()
+				.rows()
+				.sort()
+				.search()
+				.set()
+				.fl();
+
+			// You get strange, unexpected behaviour if you reuse the same stubbed function + create some weird function inside of your test file like this:
+
+			// Instead of us keeping track of the calls to each method (e.g. client.fl is called once, client.set is called once), we're now keeping track of only the number of calls made to one method, and then every time a different method is called, we're adding those number of calls onto the same count/total. So because each method is treated as `createQuery`, we're told that we've called `createQuery` 6 times, even though we've called `createQuery` once and the other 5 methods once. We are also checking the number of calls to `createQuery` only, not the other methods (as can be seen by `createQuery` popping up in every assertion error):
+			// UNCOMMENT TO SEE FAILURES. COMMENT OUT FAILED LINES TO SEE PASSING LINES.
+			// expect(client.createQuery).to.have.been.calledOnce; // Fails - AssertionError: expected createQuery to have been called exactly once, but it was called 6 times
+			// expect(client.q).to.have.been.calledOnce; // passes - this is due to both 'q' and 'rows' being assigned two different stubbed functions, rather than re-using the same stubbed function that was used for all of the other methods in the mockClientFactory.
+			// expect(client.start).to.have.been.calledOnce; // Fails - AssertionError: expected createQuery to have been called exactly once, but it was called 6 times
+			// expect(client.rows).to.have.been.calledOnce; // passes
+			// expect(client.sort).to.have.been.calledOnce; // Fails - AssertionError: expected createQuery to have been called exactly once, but it was called 6 times
+			// expect(client.search).to.have.been.calledOnce; // Fails - AssertionError: expected createQuery to have been called exactly once, but it was called 6 times
+			// expect(client.set).to.have.been.calledOnce; // Fails - AssertionError: expected createQuery to have been called exactly once, but it was called 6 times
+			// expect(client.fl).to.have.been.calledOnce; // Fails - AssertionError: expected createQuery to have been called exactly once, but it was called 6 times
+
+			// I think it would make things less risky if we stubbed methods in this way (as shown in the Sinon docs):
+			// ```
+			// var stub = sinon.createStubInstance(MyConstructor);
+			// stub.foo.returnsThis();
+			// ```
+		});
 	});
 });
