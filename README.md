@@ -18,4 +18,6 @@ To run all of the test files in the `test/` directory and rerun whenever changes
 
 ## Where are the slides of the workshop session? Was there a recording of the session?
 
-The slides can be found [here](https://docs.google.com/presentation/d/1La3z-wvTVUSncNVAeWPXB1KkPqb62_by1OZSYWF_Mxc/edit?usp=sharing) - please see the 'Useful resources' slide for links to further guides. Please note that notes were purposely not added to the slides, however a recording of the session may be available - please ask in the [#full-stack-workshop Slack channel](https://youview.slack.com/archives/CFVNHPTV0).
+The slides can be found [here](https://docs.google.com/presentation/d/1La3z-wvTVUSncNVAeWPXB1KkPqb62_by1OZSYWF_Mxc/edit?usp=sharing) - please see the 'Useful resources' slide for links to further guides. Please also note that the slides were left minimal on purpose.
+
+A recording of part 2 of the workshop can be found [here](https://youview-my.sharepoint.com/personal/ben_coveney_youview_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fben%5Fcoveney%5Fyouview%5Fcom%2FDocuments%2FRecordings%2FFull%20Stack%20Workshop%2D20220127%5F160244%2DMeeting%20Recording%2Emp4&parent=%2Fpersonal%2Fben%5Fcoveney%5Fyouview%5Fcom%2FDocuments%2FRecordings).
